@@ -5,10 +5,11 @@ export class CurrentWeather  extends Component {
         super();
         this.state = {
             city: '',
-            key: '541f15f1c5e41841d5b46f32872da01a',
+            key: '745ff62a12133bcef9cbb6f306f6c3ff',
             lat: '',
             lng: '',
             coords: [],
+            proxyUrl: 'https://cors-anywhere.herokuapp.com/',
             queryString: '',
             weatherCatalog: {},
             temperature: ''
@@ -23,7 +24,7 @@ export class CurrentWeather  extends Component {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 coords: [position.coords.latitude, position.coords.longitude],
-                queryString: `https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${this.state.key}`
+                queryString: `${this.state.proxyUrl}https://api.darksky.net/forecast/${this.state.key}/${position.coords.latitude},${position.coords.longitude}`
             });
         }
 
@@ -37,30 +38,42 @@ export class CurrentWeather  extends Component {
     }
 
     setTemperature() {
-        var curTemp = (this.state.weatherCatalog.main['temp'] - 273).toFixed(1)
+        var curTemp = ((this.state.weatherCatalog.currently.temperature - 32) / 1.8).toFixed(1);
+        var curWindSpeed = ((this.state.weatherCatalog.currently.windSpeed * 1000) / 3600).toFixed(1);
+        var curHumidity = this.state.weatherCatalog.currently.humidity * 100;
+        var curPressure = (this.state.weatherCatalog.currently.pressure * 0.75).toFixed(1);
         this.setState({
-            temperature: curTemp
+            temperature: curTemp,
+            windSpeed: curWindSpeed,
+            humidity: curHumidity,
+            pressure: curPressure
         })
+        console.log(this.state.queryString)
     }
 
     render() {
-        fetch(this.state.queryString)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                this.setState({
-                    weatherCatalog: responseJson
-                });
-            }).then((resp) => {
+        if (Object.keys(this.state.weatherCatalog).length === 0) {
+            fetch(this.state.queryString)
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    this.setState({
+                        weatherCatalog: responseJson
+                    });
+                }).then((resp) => {
                 this.setTemperature()
             })
-            .catch((error) => {
-                console.error(error);
-            });
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
         return (
             <div>
-                <button>Показать Температуру</button>
+                {/*<button>Показать Температуру</button>*/}
                 {/*<div>{this.state.coords.map((item, key)=> <li key={key}>{item}</li>)}</div>*/}
-                <div>{this.state.temperature}</div>
+                <div>Температура за окном: {this.state.temperature} &#176;C</div>
+                <div>Скорость ветра: {this.state.windSpeed} м/c</div>
+                <div>Влажность: {this.state.humidity}%</div>
+                <div>Давление: {this.state.pressure} мм. рт. ст.</div>
             </div>
 
         )

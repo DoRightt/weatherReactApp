@@ -6,7 +6,7 @@ class Main extends Component {
     render() {
         return (
             <div>
-                <h1>Coords</h1>
+                <h1>Убийца Gismeteo</h1>
                 <CurrentWeather/>
             </div>
         )
