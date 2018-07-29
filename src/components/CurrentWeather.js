@@ -1,81 +1,46 @@
 import React, { Component } from 'react';
+import '../style.css'
 
 export class CurrentWeather  extends Component {
     constructor() {
         super();
         this.state = {
-            city: '',
-            key: '745ff62a12133bcef9cbb6f306f6c3ff',
-            lat: '',
-            lng: '',
-            coords: [],
-            proxyUrl: 'https://cors-anywhere.herokuapp.com/',
-            queryString: '',
-            weatherCatalog: {},
             temperature: ''
         };
-        this.setPosition = this.setPosition.bind(this);
         this.setTemperature = this.setTemperature.bind(this);
     }
 
-    setPosition() {
-        function setCoords(position) {
-            this.setState({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                coords: [position.coords.latitude, position.coords.longitude],
-                queryString: `${this.state.proxyUrl}https://api.darksky.net/forecast/${this.state.key}/${position.coords.latitude},${position.coords.longitude}`
-            });
-        }
-
-        navigator.geolocation.getCurrentPosition(setCoords.bind(this))
-    }
-
     componentWillMount() {
-        var test = new Promise((res, rej) => {
-            this.setPosition()
-        })
+        var th = this;
+        var checkWeatherObject = setInterval(function() {
+            if (Object.keys(th.props.weather).length > 0) {
+                clearInterval(checkWeatherObject);
+                th.setTemperature();
+            }
+        }, 500);
     }
 
     setTemperature() {
-        var curTemp = ((this.state.weatherCatalog.currently.temperature - 32) / 1.8).toFixed(1);
-        var curWindSpeed = ((this.state.weatherCatalog.currently.windSpeed * 1000) / 3600).toFixed(1);
-        var curHumidity = this.state.weatherCatalog.currently.humidity * 100;
-        var curPressure = (this.state.weatherCatalog.currently.pressure * 0.75).toFixed(1);
+        var curTemp = ((this.props.weather.currently.temperature - 32) / 1.8).toFixed(1);
+        var curWindSpeed = ((this.props.weather.currently.windSpeed * 1000) / 3600).toFixed(1);
+        var curHumidity = this.props.weather.currently.humidity * 100;
+        var curPressure = (this.props.weather.currently.pressure * 0.75).toFixed(1);
         this.setState({
             temperature: curTemp,
             windSpeed: curWindSpeed,
             humidity: curHumidity,
             pressure: curPressure
         })
-        console.log(this.state.queryString)
     }
 
     render() {
-        if (Object.keys(this.state.weatherCatalog).length === 0) {
-            fetch(this.state.queryString)
-                .then((response) => response.json())
-                .then((responseJson) => {
-                    this.setState({
-                        weatherCatalog: responseJson
-                    });
-                }).then((resp) => {
-                this.setTemperature()
-            })
-                .catch((error) => {
-                    console.error(error);
-                });
-        }
         return (
-            <div>
-                {/*<button>Показать Температуру</button>*/}
-                {/*<div>{this.state.coords.map((item, key)=> <li key={key}>{item}</li>)}</div>*/}
-                <div>Температура за окном: {this.state.temperature} &#176;C</div>
-                <div>Скорость ветра: {this.state.windSpeed} м/c</div>
-                <div>Влажность: {this.state.humidity}%</div>
-                <div>Давление: {this.state.pressure} мм. рт. ст.</div>
+            <div className="currentWeather-block">
+                <div className="weather-prop-name">Температура за окном: <span className="weather-prop-value weather-prop-value--temp">{this.state.temperature} &#176;C</span></div>
+                <div className="weather-prop-name">Скорость ветра: <span className="weather-prop-value">{this.state.windSpeed} м/c</span></div>
+                <div className="weather-prop-name">Влажность: <span className="weather-prop-value">{this.state.humidity}%</span></div>
+                <div className="weather-prop-name">Давление: <span className="weather-prop-value">{this.state.pressure} мм. рт. ст.</span></div>
             </div>
-
         )
     }
 }

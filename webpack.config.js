@@ -1,5 +1,8 @@
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const cssHotLoader = require("css-hot-loader");
 
 module.exports = {
   module: {
@@ -21,12 +24,16 @@ module.exports = {
         ]
       },
       {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
+          test: /\.css$/,
+          use: [
+              { loader: "style-loader" },
+              { loader: "css-loader" }
+          ]
       }
     ]
   },
   plugins: [
+    new ExtractTextPlugin({filename: 'style.css'}),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       filename: "./index.html"

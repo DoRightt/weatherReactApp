@@ -1,0 +1,33 @@
+body {
+    background: url('https://i.pinimg.com/originals/f4/67/7f/f4677fa2bb6d6249ac27d793eec2a0a3.jpg') no-repeat;
+    -webkit-background-size: cover;
+    background-size:cover;
+}
+
+.app-title {
+    font-size: 24px;
+    color: #ffcc3c;
+    font-family: verdana, sans-serif;
+    text-align: center;
+}
+
+.weather-prop-name {
+    font-family: verdana, sans-serif;
+    font-size: 16px;
+}
+
+.weather-prop-value--temp {
+    color: #ffffff;
+    background-color: #6b71ff;
+    padding: 6px;
+    font-size: 24px;
+}
+
+.currentWeather-block {
+    background-color: #fff;
+    padding: 24px;
+    border: 1px solid gray;
+    border-radius: 24px;
+    width: 400px;
+    margin: auto;
+}

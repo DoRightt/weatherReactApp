@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import  { CurrentWeather } from  './components/CurrentWeather'
+import  { App } from  './components/App';
 
 class Main extends Component {
     render() {
         return (
             <div>
-                <h1>Убийца Gismeteo</h1>
-                <CurrentWeather/>
+                <h1 className="app-title">Убийца Gismeteo</h1>
+                <App/>
             </div>
         )
     }
